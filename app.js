@@ -11,15 +11,10 @@ const app = express()
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
 
-// require("./src/prismaInstance/client")
 app.use("/auth", authRoutes)
-// app.post("/auth/register", async (req, res) => {
-//     const { firstName, lastName, email, password } = req.body;
-//     // await validateUser(req.body, next)
+app.use("/api", userRoutes)
 
-//     let user = await client.user.findFirst({ where: { email } });
-//     console.log(user)
-// })
+
 
 app.use(notFound)
 app.use(errorHandlerMiddleware)

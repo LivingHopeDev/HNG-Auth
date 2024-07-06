@@ -8,7 +8,7 @@ const customError = require("../utils/customError")
 
 
 const register = asyncWrapper(async (req, res, next) => {
-    await validateUser(req.body, next)
+    await validateUser(req.body, "register")
     try {
 
         return await client.$transaction(async (tx) => {
@@ -18,20 +18,28 @@ const register = asyncWrapper(async (req, res, next) => {
             if (user) {
                 return res.status(200).json({ message: "Email already exist" })
             }
+
             const newUser = await tx.user.create({
                 data: {
                     ...req.body,
                     password: hashSync(password, 10),
                 },
-            })
+            });
+
             const orgName = `${firstName}'s Organisation`
-            await tx.user.create({
+            const organisation = await tx.organisation.create({
+                data: {
+                    name: orgName,
+                },
+            });
+
+            await tx.organisationUser.create({
                 data: {
                     userId: newUser.userId,
-                    name: orgName,
-
+                    orgId: organisation.orgId,
                 },
-            })
+            });
+
             const accessToken = createAccessToken({ id: newUser.userId })
             res.status(201).json({
                 status: "success",
@@ -39,7 +47,12 @@ const register = asyncWrapper(async (req, res, next) => {
                 data: {
                     accessToken: accessToken,
                     user: {
-                        ...newUser
+                        userId: newUser.userId,
+                        firstName: newUser.firstName,
+                        lastName: newUser.lastName,
+                        email: newUser.email,
+                        phone: newUser?.phone
+
                     }
                 }
             })
@@ -51,5 +64,42 @@ const register = asyncWrapper(async (req, res, next) => {
 
 
 })
+const login = asyncWrapper(async (req, res) => {
+    await validateUser(req.body)
+    try {
 
-module.exports = { register }
+        const { email, password } = req.body;
+
+        const existingUser = await client.user.findFirst({ where: { email } });
+        if (!existingUser) {
+            throw customError("Authentication failed", 401)
+
+        }
+        console.log(existingUser)
+        if (!compareSync(password, existingUser.password)) {
+            throw customError("Authentication failed", 401)
+        }
+
+        const accessToken = createAccessToken({ id: existingUser.userId })
+        res.status(201).json({
+            status: "success",
+            message: "Login successful",
+            data: {
+                accessToken: accessToken,
+                user: {
+                    userId: existingUser.userId,
+                    firstName: existingUser.firstName,
+                    lastName: existingUser.lastName,
+                    email: existingUser.email,
+                    phone: existingUser?.phone
+                }
+            }
+        })
+    } catch (error) {
+        console.log(error)
+        throw customError("Authentication failed", 401)
+
+    }
+});
+
+module.exports = { register, login }
