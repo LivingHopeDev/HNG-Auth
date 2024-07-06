@@ -1,0 +1,47 @@
+// schema.prisma
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    userId           String             @id @unique @default(uuid())
+    firstName        String
+    lastName         String
+    email            String             @unique
+    password         String
+    phone            String?
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @updatedAt
+    organisations    Organisation[]
+    OrganisationUser OrganisationUser[]
+
+    @@map("users")
+}
+
+model Organisation {
+    orgId            String             @id @unique @default(uuid())
+    name             String
+    description      String?
+    userId           String
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @updatedAt
+    users            User[]
+    OrganisationUser OrganisationUser[]
+
+    @@map("organisations")
+}
+
+model OrganisationUser {
+    orgId        String
+    userId       String
+    organisation Organisation @relation(fields: [orgId], references: [orgId])
+    user         User         @relation(fields: [userId], references: [userId])
+
+    @@id([orgId, userId])
+}
