@@ -16,7 +16,7 @@ const register = asyncWrapper(async (req, res, next) => {
 
             const user = await tx.user.findFirst({ where: { email } });
             if (user) {
-                return res.status(200).json({ message: "Email already exist" })
+                throw customError("Registration unsuccessful", 400)
             }
 
             const newUser = await tx.user.create({
@@ -65,7 +65,7 @@ const register = asyncWrapper(async (req, res, next) => {
 
 })
 const login = asyncWrapper(async (req, res) => {
-    await validateUser(req.body)
+    await validateUser(req.body, "login")
     try {
 
         const { email, password } = req.body;

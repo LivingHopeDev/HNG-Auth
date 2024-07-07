@@ -1,7 +1,10 @@
 const validateUser = async (body, type) => {
     const errors = [];
-    const requiredFields = type === "register" ? ["firstName", "lastName", "email", "password"] : ["email", "password"];
-
+    const requiredFields = type === "register"
+        ? ["firstName", "lastName", "email", "password"]
+        : type === "login"
+            ? ["email", "password"]
+            : ["name"];
     requiredFields.forEach((field) => {
         if (!body[field]) {
             errors.push({ field, message: `${field} is required` });
