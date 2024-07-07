@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 
-const createAccessToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30m" });
+const createAccessToken = (userId) => {
+    return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "30m" });
 };
 
-const verifyToken = async (req, res, next) => {
+const verifyAccessToken = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer")) {
         return res
@@ -15,9 +15,10 @@ const verifyToken = async (req, res, next) => {
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
             if (err) {
-                res.status(403).json({ error: true, message: "Invalid token" });
+                res.status(403).json({ error: true, message: "Expired or Invalid token" });
             } else {
                 req.user = decodedToken;
+
                 next();
             }
         });
@@ -27,6 +28,6 @@ const verifyToken = async (req, res, next) => {
 };
 
 module.exports = {
-    verifyToken,
+    verifyAccessToken,
     createAccessToken,
 };

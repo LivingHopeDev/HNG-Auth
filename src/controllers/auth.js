@@ -40,7 +40,7 @@ const register = asyncWrapper(async (req, res, next) => {
                 },
             });
 
-            const accessToken = createAccessToken({ id: newUser.userId })
+            const accessToken = createAccessToken(newUser.userId)
             res.status(201).json({
                 status: "success",
                 message: "Registration successful",
@@ -75,12 +75,11 @@ const login = asyncWrapper(async (req, res) => {
             throw customError("Authentication failed", 401)
 
         }
-        console.log(existingUser)
         if (!compareSync(password, existingUser.password)) {
             throw customError("Authentication failed", 401)
         }
 
-        const accessToken = createAccessToken({ id: existingUser.userId })
+        const accessToken = createAccessToken(existingUser.userId)
         res.status(201).json({
             status: "success",
             message: "Login successful",
