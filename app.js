@@ -22,7 +22,10 @@ app.use("/api", orgRoutes)
 
 app.use(notFound)
 app.use(errorHandlerMiddleware)
-app.listen(port, () => {
-    console.log(`Server running http:localhost:${port}`)
-})
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(port, () => {
+        console.log(`Server running http:localhost:${port}`);
+    });
+}
 
+module.exports = { app }

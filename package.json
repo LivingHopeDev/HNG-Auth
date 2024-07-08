@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --no-cache  --detectOpenHandles --runInBand --forceExit cross-env NODE_ENV=test",
     "test:watch": "jest --watch",
     "dev": "nodemon app.js"
   },
@@ -15,6 +15,7 @@
     "@prisma/adapter-pg": "^5.16.1",
     "@prisma/client": "^5.16.1",
     "bcrypt": "^5.1.1",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "http-status-codes": "^2.3.0",
