@@ -2,25 +2,25 @@ const app = require('../index');
 const request = require('supertest');
 
 describe('Registration', () => {
-    // it('Should register user successfully with default organisation', async () => {
-    //     const userData = {
-    //         firstName: 'John',
-    //         lastName: 'Doe',
-    //         email: 'johndoe43@example.com',
-    //         password: 'password123'
-    //     };
+    it('Should register user successfully with default organisation', async () => {
+        const userData = {
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'johndoe4313@example.com',
+            password: 'password123'
+        };
 
-    //     const response = await request(app).post("/auth/register").send(userData)
+        const response = await request(app).post("/auth/register").send(userData)
 
-    //     expect(response.status).toBe(201);
-    //     expect(response._body.status).toBe('success');
-    //     expect(response._body.message).toBe('Registration successful');
-    //     expect(response._body.data.accessToken).toBeDefined();
-    //     expect(response._body.data.user).toBeDefined();
-    //     expect(response._body.data.user.firstName).toBe(userData.firstName);
-    //     expect(response._body.data.user.lastName).toBe(userData.lastName);
-    //     expect(response._body.data.user.email).toBe(userData.email);
-    // });
+        expect(response.status).toBe(201);
+        expect(response.body.status).toBe('success');
+        expect(response.body.message).toBe('Registration successful');
+        expect(response.body.data.accessToken).toBeDefined();
+        expect(response.body.data.user).toBeDefined();
+        expect(response.body.data.user.firstName).toBe(userData.firstName);
+        expect(response.body.data.user.lastName).toBe(userData.lastName);
+        expect(response.body.data.user.email).toBe(userData.email);
+    });
 
 })
 describe('Should Log the user in successfully', () => {
@@ -108,13 +108,35 @@ describe('Should Fail If Required Fields Are Missing', () => {
         };
 
         const response = await request(app).post("/auth/register").send(userData)
-        console.log(response)
         expect(response.status).toBe(422);
         expect(response.body.errors).toEqual([
             { field: 'password', message: 'password is required' }
         ]);
     });
 })
+
+describe('Duplicate Email ', () => {
+    it('Should fail if email is already in use', async () => {
+        const userData = {
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'johndoe@example.com',
+            password: 'password123'
+        };
+
+        // Register the first user
+        await request(app).post("/auth/register").send(userData)
+
+        // Attempt to register a second user with the same email
+        const response = await request(app).post("/auth/register").send(userData)
+
+        expect(response.status).toBe(422);
+        expect(response.body.message).toBe('Email already exist');
+
+    });
+
+
+});
 afterAll(async () => {
     await app.close
 });
