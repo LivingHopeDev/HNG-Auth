@@ -13,7 +13,7 @@ const app = express()
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
 
-app.use("/api/auth", authRoutes)
+app.use("/auth", authRoutes)
 app.use("/api", userRoutes)
 app.use("/api", orgRoutes)
 
