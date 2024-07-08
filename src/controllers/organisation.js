@@ -42,44 +42,45 @@ const getUserOrganisations = asyncWrapper(async (req, res) => {
 
 
 const getOrganisation = asyncWrapper(async (req, res) => {
-    try {
-        const { orgId } = req.params;
-        const { userId } = req.user;
-        const organisation = await client.organisation.findFirst({
-            where: {
-                orgId: orgId,
-                OrganisationUser: {
-                    some: {
-                        userId: userId,
-                    },
+    // try {
+    const { orgId } = req.params;
+    const { userId } = req.user;
+    const organisation = await client.organisation.findFirst({
+        where: {
+            orgId: orgId,
+            OrganisationUser: {
+                some: {
+                    userId: userId,
                 },
             },
-            select: {
-                orgId: true,
-                name: true,
-                description: true,
-            },
-        });
+        },
+        select: {
+            orgId: true,
+            name: true,
+            description: true,
+        },
+    });
 
-        if (!organisation) {
-            throw customError("Client error", 400)
-
-        }
-
-        res.status(200).json({
-            status: 'success',
-            message: 'Organisation retrieved successfully',
-            data: {
-                orgId: organisation.orgId,
-                name: organisation.name,
-                description: organisation.description,
-            },
-        });
-    } catch (error) {
-        console.log(error)
-        throw customError("Client error", 400)
+    if (!organisation) {
+        console.log("hello")
+        throw customError("Client error", 404)
 
     }
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Organisation retrieved successfully',
+        data: {
+            orgId: organisation.orgId,
+            name: organisation.name,
+            description: organisation.description,
+        },
+    });
+    // } catch (error) {
+    //     console.log(error)
+    //     throw customError("Client error", 400)
+
+    // }
 });
 
 

@@ -5,9 +5,9 @@ const request = require('supertest');
 describe('Registration', () => {
     it('Should register user successfully with default organisation', async () => {
         const userData = {
-            firstName: 'ade',
-            lastName: 'tayo',
-            email: 'tayo@gmail.com',
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'johndoe@example.com',
             password: 'password123'
         };
 
