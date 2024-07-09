@@ -62,8 +62,7 @@ const getOrganisation = asyncWrapper(async (req, res) => {
     });
 
     if (!organisation) {
-        console.log("hello")
-        throw customError("Client error", 404)
+        throw customError("Client error", 401)
 
     }
 
@@ -103,6 +102,7 @@ const addUserToOrganisation = asyncWrapper(async (req, res) => {
         });
 
         if (!user) {
+
             throw customError("Client error", 400)
 
         }
@@ -115,6 +115,7 @@ const addUserToOrganisation = asyncWrapper(async (req, res) => {
         });
 
         if (existingEntry) {
+
             throw customError("Client error", 400)
 
         }
@@ -159,7 +160,6 @@ const createOrganisation = asyncWrapper(async (req, res) => {
                 description: true,
             },
         });
-        console.log(newOrganisation)
         await client.organisationUser.create({
             data: {
                 userId: userId,

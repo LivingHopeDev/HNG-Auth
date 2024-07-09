@@ -3,7 +3,7 @@ const { getUser } = require("../controllers/user")
 const { verifyAccessToken } = require("../middleware/auth")
 const userRoutes = Router()
 
-userRoutes.get("/user/:id", verifyAccessToken, getUser);
+userRoutes.get("/users/:id", verifyAccessToken, getUser);
 
 
 module.exports = userRoutes;
